@@ -37,6 +37,23 @@ public class Recipe {
     @OneToOne(cascade = CascadeType.ALL)
     private Note note;
 
+    // here for value, we have two EnumTypes - ordinary and string
+    // ORDINAL is default and that is going to get, if we don't specify anything there
+    // and it is going going to persist the enum values as Integers (1, 2 and 3)
+    // STRING is going to get the String value (EASY, MEDIUM or HARD) and persist
+    @Enumerated(value = EnumType.STRING)
+    private Difficulty difficulty;
+
+    // here in "joinColumns" and "inverseJoinColumns" we only specify the names of the columns in the db table
+    // good practice is the both columns to be in singular
+    // "joinColumns" will match column of this table and "inverseJoinColumns" will match column of the other table
+    // so we want a table "recipe_category" and from this way of the relationship we are going to use recipe_id
+    // and from the other category_id
+    @ManyToMany
+    @JoinTable(name = "recipe_category",
+        joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories;
+
     public Long getId() {
         return id;
     }
@@ -109,11 +126,35 @@ public class Recipe {
         this.image = image;
     }
 
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
     public Note getNote() {
         return note;
     }
 
     public void setNote(Note note) {
         this.note = note;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 }
