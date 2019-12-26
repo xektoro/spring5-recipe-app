@@ -1,7 +1,5 @@
 package com.example.spring5recipeapp.domain;
 
-import org.hibernate.annotations.GeneratorType;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -23,6 +21,17 @@ public class Ingredient {
     // Anyway OneToOne is by default Eager
     @OneToOne(fetch = FetchType.EAGER)
     private UnitOfMeasure unitOfMeasure;
+
+    public Ingredient() {
+
+    }
+
+    public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMeasure, Recipe recipe) {
+        this.description = description;
+        this.amount = amount;
+        this.unitOfMeasure = unitOfMeasure;
+        this.recipe = recipe;
+    }
 
     public Long getId() {
         return id;

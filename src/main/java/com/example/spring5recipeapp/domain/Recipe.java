@@ -1,8 +1,7 @@
 package com.example.spring5recipeapp.domain;
 
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
-
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,6 +20,8 @@ public class Recipe {
     private Integer serveTime;
     private String source;
     private String url;
+
+    @Lob
     private String directions;
 
     // here we want the recipe to own this relationship
@@ -28,7 +29,7 @@ public class Recipe {
     // so this defines a relationship from Recipe class and we are saying that this Recipe will get storedon a property on the child ("recipe")
     // mappedBy = "recipe" is the target property on the Ingredient class
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     // this is going to be created as a binary large object field (BLOB) in the database
     @Lob
@@ -52,7 +53,7 @@ public class Recipe {
     @ManyToMany
     @JoinTable(name = "recipe_category",
         joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -148,6 +149,16 @@ public class Recipe {
 
     public void setNote(Note note) {
         this.note = note;
+        // we do the two-way directional setting process relationship on one place - the second now is automatic
+        note.setRecipe(this);
+    }
+
+    //
+    public Recipe addIngredient(Ingredient ingredient) {
+        this.ingredients.add(ingredient);
+        // we do the two-way directional setting process relationship on one place - the second now is automatic
+        ingredient.setRecipe(this);
+        return this;
     }
 
     public Set<Category> getCategories() {
