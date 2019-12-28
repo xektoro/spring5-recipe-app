@@ -4,13 +4,18 @@ import com.example.spring5recipeapp.domain.*;
 import com.example.spring5recipeapp.repositories.CategoryRepositoty;
 import com.example.spring5recipeapp.repositories.RecipeRepository;
 import com.example.spring5recipeapp.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
+// SlF4j is a logging facade. That is going to give us access to the default Spring Boot logger, which is the Logback
+// this annotations injects a logger
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -25,8 +30,13 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     }
 
     @Override
+    // we direct the Spring Framework to create a transaction around this method.
+    // So now everything is going to happen in the same transactional context an we won't see this
+    // lazy initialization exception
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         recipeRepository.save(getRecipe());
+        log.debug("Loading Bootstrap Data ...");
     }
 
     //pretty ugly code
