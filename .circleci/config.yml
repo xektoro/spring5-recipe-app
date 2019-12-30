@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    # job for Docker
+    # job for Dockerr
     docker:
       # specify the version you desire here
       # a build is gonna run inside of a Docker container and we are going to
