@@ -1,0 +1,50 @@
+# Java Maven CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+# our build is going to run inside of Docker Container
+version: 2
+jobs:
+  build:
+    # job for Docker
+    docker:
+      # specify the version you desire here
+      # a build is gonna run inside of a Docker container and we are going to
+      # utilize the Circle CI Open JDK 8 (so this is setting up the JDK 8)
+      - image: circleci/openjdk:8-jdk
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    # sets up the working directory
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # install - tells Maven to install to the local directory (into the local .m2)
+      # the install step will actually tell to go ahead install all the artifacts into the local Maven directory (.m2)
+      # install the modules into the local (but without tests).
+      - run: mvn install -DskipTests
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      # run tests! (all tests - unit tests and integration tests)
+      - run: mvn integration-test
