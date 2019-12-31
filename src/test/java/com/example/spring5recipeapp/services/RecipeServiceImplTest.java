@@ -59,22 +59,7 @@ class RecipeServiceImplTest {
     }
 
     @Test
-    public void getRecipesTest() {
-        Recipe recipe = new Recipe();
-        HashSet recipesData = new HashSet();
-        recipesData.add(recipe);
-
-        when(recipeService.getRecipes()).thenReturn(recipesData);
-
-        Set<Recipe> recipes = recipeService.getRecipes();
-
-        assertEquals(recipes.size(), 1);
-        verify(recipeRepository, times(1)).findAll();
-        verify(recipeRepository, never()).findById(anyLong());
-    }
-
-    @Test
-    void getRecipes() {
+    public void getRecipes() {
         Recipe recipe = new Recipe();
         HashSet<Recipe> recipesData = new HashSet<>();
         recipesData.add(recipe);
@@ -88,5 +73,17 @@ class RecipeServiceImplTest {
         // verify that method of recipeRepository (findALl()) was called only once, not twice or zero..
         // that is good way to check that interactions within the class are happening as expected
         verify(recipeRepository, times(1)).findAll();
+        verify(recipeRepository, never()).findById(anyLong());
+    }
+
+    public void testDeleteById() {
+        // given
+        Long idToDelete = Long.valueOf(2L);
+
+        // when
+        recipeService.deleteById(idToDelete);
+
+        // then
+        verify(recipeRepository, times(1)).deleteById(anyLong());
     }
 }
