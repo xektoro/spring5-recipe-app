@@ -60,9 +60,11 @@ public class Recipe {
 
     // these setter method is going to override the default one from Lombok!
     public void setNote(Note note) {
-        this.note = note;
-        // we do the two-way directional setting process relationship on one place - the second now is automatic
-        note.setRecipe(this);
+        if(note != null) {
+            this.note = note;
+            // we do the two-way directional setting process relationship on one place - the second now is automatic
+            note.setRecipe(this);
+        }
     }
 
     public Recipe addIngredient(Ingredient ingredient) {

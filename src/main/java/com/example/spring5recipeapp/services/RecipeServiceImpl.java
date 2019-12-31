@@ -1,9 +1,13 @@
 package com.example.spring5recipeapp.services;
 
+import com.example.spring5recipeapp.commands.RecipeCommand;
+import com.example.spring5recipeapp.converters.RecipeCommandToEntity;
+import com.example.spring5recipeapp.converters.RecipeEntityToCommand;
 import com.example.spring5recipeapp.domain.Recipe;
 import com.example.spring5recipeapp.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -14,9 +18,13 @@ import java.util.Set;
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final RecipeEntityToCommand recipeEntityToCommand;
+    private final RecipeCommandToEntity recipeCommandToEntity;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, RecipeEntityToCommand recipeEntityToCommand, RecipeCommandToEntity recipeCommandToEntity) {
         this.recipeRepository = recipeRepository;
+        this.recipeEntityToCommand = recipeEntityToCommand;
+        this.recipeCommandToEntity = recipeCommandToEntity;
     }
 
     @Override
@@ -38,5 +46,18 @@ public class RecipeServiceImpl implements RecipeService {
         }
 
         return recipeOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand) {
+        // we convert it and still it is just a POJO, not a Hibernate object
+        // It is still in detached from Hibernate context
+        Recipe detachedRecipe = recipeCommandToEntity.convert(recipeCommand);
+
+        Recipe savedRecipe = recipeRepository.save(detachedRecipe);
+        log.debug("Saved RecipeId:" + savedRecipe.getId());
+        // we convert it back
+        return recipeEntityToCommand.convert(savedRecipe);
     }
 }

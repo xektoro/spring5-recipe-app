@@ -1,5 +1,7 @@
 package com.example.spring5recipeapp.services;
 
+import com.example.spring5recipeapp.converters.RecipeCommandToEntity;
+import com.example.spring5recipeapp.converters.RecipeEntityToCommand;
 import com.example.spring5recipeapp.domain.Recipe;
 import com.example.spring5recipeapp.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,12 @@ class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeEntityToCommand recipeEntityToCommand;
+
+    @Mock
+    RecipeCommandToEntity recipeCommandToEntity;
+
     @BeforeEach
     public void setUp() {
         // initialize out Mocks
@@ -32,7 +40,7 @@ class RecipeServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         // initialize out recipe service
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeEntityToCommand, recipeCommandToEntity);
     }
 
     @Test
