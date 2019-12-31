@@ -57,7 +57,7 @@ class RecipeCommandToEntityTest {
         recipeCommand.setDescription(DESCRIPTION);
         recipeCommand.setDifficulty(DIFFICULTY);
         recipeCommand.setDirections(DIRECTIONS);
-        recipeCommand.setServings(SERVINGS);
+        recipeCommand.setServeTime(SERVINGS);
         recipeCommand.setSource(SOURCE);
         recipeCommand.setUrl(URL);
 

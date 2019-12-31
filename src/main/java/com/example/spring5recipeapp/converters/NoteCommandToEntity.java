@@ -20,7 +20,7 @@ public class NoteCommandToEntity implements Converter<NoteCommand, Note> {
 
         final Note noteEntity = new Note();
         noteEntity.setId(noteCommand.getId());
-        noteEntity.setRecipeNote(noteCommand.getRecipeNotes());
+        noteEntity.setRecipeNote(noteCommand.getRecipeNote());
         return noteEntity;
     }
 }

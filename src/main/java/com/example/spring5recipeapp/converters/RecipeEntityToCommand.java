@@ -37,7 +37,7 @@ public class RecipeEntityToCommand implements Converter<Recipe, RecipeCommand> {
         command.setDescription(entity.getDescription());
         command.setDifficulty(entity.getDifficulty());
         command.setDirections(entity.getDirections());
-        command.setServings(entity.getServeTime());
+        command.setServeTime(entity.getServeTime());
         command.setSource(entity.getSource());
         command.setUrl(entity.getUrl());
         command.setNote(notesConverter.convert(entity.getNote()));

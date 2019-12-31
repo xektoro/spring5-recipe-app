@@ -60,4 +60,13 @@ public class RecipeServiceImpl implements RecipeService {
         // we convert it back
         return recipeEntityToCommand.convert(savedRecipe);
     }
+
+    @Override
+    // because we are doing conversion outside of the scope
+    // so wif we hit any lazy loaded properties it will throw an exception
+    // so we are extending the transactional scope to be that method
+    @Transactional
+    public RecipeCommand findCommandById(Long id) {
+        return recipeEntityToCommand.convert(findById(id));
+    }
 }
