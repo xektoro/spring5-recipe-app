@@ -1,12 +1,14 @@
 package com.example.spring5recipeapp.domain;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 // this is going to exclude from the generation of "equals" and "hashCode" this variables
 // because we have here bidirectional relationship and we get circular dependecy, so wi need need to exclude these
 // properties from "equals" and "hashCode" methods
