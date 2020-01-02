@@ -37,6 +37,7 @@ public class Recipe {
     private Set<Ingredient> ingredients = new HashSet<>();
 
     // this is going to be created as a binary large object field (BLOB) in the database
+    // it is a recommendation from Hibernate team to use wrappers and not primitives (Byte over byte, Integer over int, ....)
     @Lob
     private Byte[] image;
 

@@ -40,6 +40,7 @@ public class RecipeEntityToCommand implements Converter<Recipe, RecipeCommand> {
         command.setServeTime(entity.getServeTime());
         command.setSource(entity.getSource());
         command.setUrl(entity.getUrl());
+        command.setImage(entity.getImage());
         command.setNote(notesConverter.convert(entity.getNote()));
 
         if (entity.getCategories() != null && entity.getCategories().size() > 0){
