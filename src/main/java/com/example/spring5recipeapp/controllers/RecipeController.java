@@ -7,12 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 @Slf4j
 @Controller
 public class RecipeController {
+
+    private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
 
     private RecipeService recipeService;
 
@@ -30,19 +35,28 @@ public class RecipeController {
     @GetMapping("recipe/new")
     public String newRecipe(Model model) {
         model.addAttribute("recipe", new RecipeCommand());
-        return "recipe/recipeform";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     @GetMapping("recipe/{id}/update")
     public String updateRecipe(@PathVariable("id") String id, Model model) {
         model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
-        return "recipe/recipeform";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     // @ModelAttribute annotation is saying to Spring to bind the form post parameters to the RecipeCommand object
     // @RequestMapping(name = "recipe", method = RequestMethod.POST) // this is the same
     @PostMapping("recipe")
-    public String saveOrUpdate(@ModelAttribute RecipeCommand command) {
+    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> {
+                log.debug(objectError.toString());
+            });
+
+            return RECIPE_RECIPEFORM_URL;
+        }
+
         RecipeCommand savedOrUpdatedCommand = recipeService.saveRecipeCommand(command);
 
         // this will tell Spring to redirect to specific URL
@@ -70,20 +84,6 @@ public class RecipeController {
         ModelAndView mav = new ModelAndView();
         // set the view name
         mav.setViewName("404error");
-        mav.addObject("exception", exception);
-
-        return mav;
-    }
-
-    @ExceptionHandler(NumberFormatException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handleNumberFormatException(Exception exception) {
-        log.error("Handling Number Format Exception");
-        log.error(exception.getMessage());
-
-        ModelAndView mav = new ModelAndView();
-        // set the view name
-        mav.setViewName("400error");
         mav.addObject("exception", exception);
 
         return mav;
