@@ -1,14 +1,14 @@
 package com.example.spring5recipeapp.controllers;
 
 import com.example.spring5recipeapp.commands.RecipeCommand;
+import com.example.spring5recipeapp.exceptions.NotFoundException;
 import com.example.spring5recipeapp.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Controller
@@ -56,5 +56,36 @@ public class RecipeController {
         recipeService.deleteById(Long.valueOf(id));
         //
         return "redirect:/";
+    }
+
+    // @ExceptionHandler - we are saying that we are using NotFoundException class
+    @ExceptionHandler(NotFoundException.class)
+    // normally this method takes higher precedence than the exception class
+    // so we have to "override" it (in order to run successful the test RecipeControllerTest.testGetRecipeNotFound)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleNotFound(Exception exception) {
+        log.error("Handling Not Found Exception");
+        log.error(exception.getMessage());
+
+        ModelAndView mav = new ModelAndView();
+        // set the view name
+        mav.setViewName("404error");
+        mav.addObject("exception", exception);
+
+        return mav;
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ModelAndView handleNumberFormatException(Exception exception) {
+        log.error("Handling Number Format Exception");
+        log.error(exception.getMessage());
+
+        ModelAndView mav = new ModelAndView();
+        // set the view name
+        mav.setViewName("400error");
+        mav.addObject("exception", exception);
+
+        return mav;
     }
 }
